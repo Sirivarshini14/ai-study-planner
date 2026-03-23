@@ -6,7 +6,7 @@ services:
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     plan: free
-    region: oregon
+    region: singapore
     healthCheckPath: /actuator/health
     envVars:
       - key: DATABASE_URL
@@ -47,7 +47,7 @@ services:
     dockerfilePath: ./frontend/Dockerfile
     dockerContext: ./frontend
     plan: free
-    region: oregon
+    region: singapore
     envVars:
       - key: REACT_APP_API_URL
         value: https://studyplanner-api.onrender.com/api
@@ -55,6 +55,6 @@ services:
 databases:
   - name: studyplanner-db
     plan: free
-    region: oregon
+    region: singapore
     databaseName: studyplanner
     user: studyplanner_user
