@@ -42,7 +42,7 @@ services:
       - key: TWILIO_PHONE_NUMBER
         sync: false
       - key: CORS_ORIGINS
-        value: https://studyplanner-web-o2qn.onrender.com
+        value: https://studyplanner-web.onrender.com
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: update
       - key: PORT
