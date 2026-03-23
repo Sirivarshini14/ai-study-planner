@@ -45,6 +45,8 @@ services:
         value: https://studyplanner-web.onrender.com
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: update
+      - key: PORT
+        value: "10000"
 
   # ---- Frontend (React + Nginx) ----
   - type: web
