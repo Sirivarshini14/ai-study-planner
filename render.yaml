@@ -9,15 +9,23 @@ services:
     region: singapore
     healthCheckPath: /actuator/health
     envVars:
-      - key: DATABASE_URL
+      - key: DB_HOST
         fromDatabase:
           name: studyplanner-db
-          property: connectionURI
-      - key: DATABASE_USERNAME
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: studyplanner-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: studyplanner-db
+          property: database
+      - key: DB_USER
         fromDatabase:
           name: studyplanner-db
           property: user
-      - key: DATABASE_PASSWORD
+      - key: DB_PASSWORD
         fromDatabase:
           name: studyplanner-db
           property: password
