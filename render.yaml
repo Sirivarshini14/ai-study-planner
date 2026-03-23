@@ -42,7 +42,7 @@ services:
       - key: TWILIO_PHONE_NUMBER
         sync: false
       - key: CORS_ORIGINS
-        value: https://studyplanner-web.onrender.com
+        value: https://studyplanner-web-o2qn.onrender.com
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO
         value: update
       - key: PORT
@@ -58,7 +58,7 @@ services:
     region: singapore
     envVars:
       - key: REACT_APP_API_URL
-        value: https://studyplanner-api.onrender.com/api
+        value: https://studyplanner-api-o2qn.onrender.com/api
 
 databases:
   - name: studyplanner-db
