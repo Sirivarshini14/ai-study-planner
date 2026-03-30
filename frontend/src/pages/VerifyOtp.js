@@ -106,9 +106,9 @@ export default function VerifyOtp() {
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-sm border space-y-6">
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              We've sent a 6-digit OTP to your email
+              We've sent a 6-digit OTP to your registered email.
             </p>
-            <p className="text-lg font-semibold text-gray-800 mt-1">{mobile}</p>
+            <p className="text-sm text-gray-500 mt-1">Check your inbox (and spam folder)</p>
           </div>
 
           {error && (

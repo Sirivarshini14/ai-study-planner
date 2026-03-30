@@ -46,7 +46,7 @@ export function AuthProvider({ children }) {
     const { data } = await authService.verifyOtp({ mobile, otp });
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
-    setUser({ id: data.id, name: data.name, mobile: data.mobile });
+    setUser({ id: data.id, name: data.name, mobile: data.mobile, email: data.email });
   };
 
   const logout = () => {
