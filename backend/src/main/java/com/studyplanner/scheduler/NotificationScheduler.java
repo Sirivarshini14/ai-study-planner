@@ -4,7 +4,7 @@ import com.studyplanner.entity.Notification;
 import com.studyplanner.entity.StudySession;
 import com.studyplanner.repository.NotificationRepository;
 import com.studyplanner.repository.StudySessionRepository;
-import com.studyplanner.service.SmsService;
+import com.studyplanner.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,7 +22,7 @@ public class NotificationScheduler {
 
     private final StudySessionRepository sessionRepository;
     private final NotificationRepository notificationRepository;
-    private final SmsService smsService;
+    private final EmailService emailService;
 
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("hh:mm a");
 
@@ -61,13 +61,13 @@ public class NotificationScheduler {
                     .build();
             notificationRepository.save(notification);
 
-            // Send SMS reminder
+            // Send email reminder
             try {
-                smsService.sendSms(session.getUser().getMobile(), message);
-                log.info("SMS reminder sent for session {} to user {}",
-                        session.getId(), session.getUser().getMobile());
+                emailService.sendOtp(session.getUser().getEmail(), message);
+                log.info("Email reminder sent for session {} to user {}",
+                        session.getId(), session.getUser().getEmail());
             } catch (Exception e) {
-                log.error("Failed to send SMS for session {}: {}", session.getId(), e.getMessage());
+                log.error("Failed to send email for session {}: {}", session.getId(), e.getMessage());
                 // Don't fail the whole batch — continue with other sessions
             }
 
