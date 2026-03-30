@@ -29,10 +29,14 @@ public class AuthService {
         if (userRepository.existsByMobile(request.getMobile())) {
             throw new BadRequestException("Mobile number already registered");
         }
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new BadRequestException("Email already registered");
+        }
 
         User user = User.builder()
                 .name(request.getName())
                 .mobile(request.getMobile())
+                .email(request.getEmail())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
                 .verified(true)
                 .build();
@@ -54,15 +58,15 @@ public class AuthService {
 
     @Transactional
     public Map<String, String> resendOtp(ResendOtpRequest request) {
-        userRepository.findByMobile(request.getMobile())
+        User user = userRepository.findByMobile(request.getMobile())
                 .orElseThrow(() -> new BadRequestException("Mobile number not registered"));
 
-        boolean otpSent = otpService.generateAndSend(request.getMobile());
+        boolean otpSent = otpService.generateAndSend(request.getMobile(), user.getEmail());
 
         if (otpSent) {
-            return Map.of("message", "OTP resent to " + request.getMobile());
+            return Map.of("message", "OTP resent to " + user.getEmail());
         } else {
-            return Map.of("message", "SMS delivery failed. Please try again later.");
+            return Map.of("message", "Email delivery failed. Please try again later.");
         }
     }
 
@@ -75,12 +79,12 @@ public class AuthService {
             throw new BadRequestException("Invalid mobile number or password");
         }
 
-        boolean otpSent = otpService.generateAndSend(request.getMobile());
+        boolean otpSent = otpService.generateAndSend(request.getMobile(), user.getEmail());
 
         if (otpSent) {
-            return Map.of("message", "OTP sent to " + request.getMobile() + ". Please verify to login.");
+            return Map.of("message", "OTP sent to " + user.getEmail() + ". Please check your email.");
         } else {
-            return Map.of("message", "OTP generated but SMS delivery failed. Please try resending OTP.");
+            return Map.of("message", "OTP generated but email delivery failed. Please try resending OTP.");
         }
     }
 
@@ -109,6 +113,7 @@ public class AuthService {
                 .id(user.getId())
                 .name(user.getName())
                 .mobile(user.getMobile())
+                .email(user.getEmail())
                 .accessToken(jwtUtil.generateAccessToken(user.getId(), user.getMobile()))
                 .refreshToken(jwtUtil.generateRefreshToken(user.getId(), user.getMobile()))
                 .build();

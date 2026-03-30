@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class OtpService {
 
     private final OtpVerificationRepository otpRepository;
-    private final SmsService smsService;
+    private final EmailService emailService;
 
     private static final int OTP_LENGTH = 6;
     private static final int OTP_EXPIRY_MINUTES = 5;
@@ -26,7 +26,7 @@ public class OtpService {
     private final SecureRandom random = new SecureRandom();
 
     @Transactional
-    public boolean generateAndSend(String mobile) {
+    public boolean generateAndSend(String mobile, String email) {
         String otp = generateOtp();
 
         OtpVerification verification = OtpVerification.builder()
@@ -38,10 +38,10 @@ public class OtpService {
         otpRepository.save(verification);
 
         try {
-            smsService.sendOtp(mobile, otp);
+            emailService.sendOtp(email, otp);
             return true;
         } catch (Exception e) {
-            log.error("SMS delivery failed for {}: {}", mobile, e.getMessage());
+            log.error("Email delivery failed for {}: {}", email, e.getMessage());
             return false;
         }
     }

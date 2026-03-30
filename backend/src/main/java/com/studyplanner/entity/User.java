@@ -28,6 +28,9 @@ public class User {
     @Column(nullable = false, unique = true, length = 15)
     private String mobile;
 
+    @Column(nullable = false, unique = true)
+    private String email;
+
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 

@@ -17,6 +17,18 @@ spring:
         jdbc:
           time_zone: UTC
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_APP_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enabled: true
+
   jackson:
     serialization:
       write-dates-as-timestamps: false
@@ -32,10 +44,6 @@ app:
     refresh-token-expiry-ms: 604800000   # 7 days
   cors:
     allowed-origins: ${CORS_ORIGINS:http://localhost:3000}
-  twilio:
-    account-sid: ${TWILIO_ACCOUNT_SID:}
-    auth-token: ${TWILIO_AUTH_TOKEN:}
-    phone-number: ${TWILIO_PHONE_NUMBER:}
   groq:
     api-key: ${GROQ_API_KEY:}
     model: ${GROQ_MODEL:llama-3.3-70b-versatile}

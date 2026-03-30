@@ -39,7 +39,7 @@ export function AuthProvider({ children }) {
     const { data } = await authService.signup(formData);
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
-    setUser({ id: data.id, name: data.name, mobile: data.mobile });
+    setUser({ id: data.id, name: data.name, mobile: data.mobile, email: data.email });
   };
 
   const verifyOtp = async (mobile, otp) => {

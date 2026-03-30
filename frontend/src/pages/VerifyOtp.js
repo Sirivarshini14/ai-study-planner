@@ -100,13 +100,13 @@ export default function VerifyOtp() {
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <h1 className="text-3xl font-bold text-indigo-600">StudyPlanner</h1>
-          <p className="mt-2 text-gray-500">Verify your mobile number</p>
+          <p className="mt-2 text-gray-500">Verify your identity</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-sm border space-y-6">
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              We've sent a 6-digit OTP to
+              We've sent a 6-digit OTP to your email
             </p>
             <p className="text-lg font-semibold text-gray-800 mt-1">{mobile}</p>
           </div>

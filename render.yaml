@@ -35,11 +35,9 @@ services:
         sync: false
       - key: GROQ_MODEL
         value: llama-3.3-70b-versatile
-      - key: TWILIO_ACCOUNT_SID
+      - key: MAIL_USERNAME
         sync: false
-      - key: TWILIO_AUTH_TOKEN
-        sync: false
-      - key: TWILIO_PHONE_NUMBER
+      - key: MAIL_APP_PASSWORD
         sync: false
       - key: CORS_ORIGINS
         value: https://studyplanner-web-qina.onrender.com

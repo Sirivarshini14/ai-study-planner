@@ -12,12 +12,14 @@ public class UserResponse {
     private Long id;
     private String name;
     private String mobile;
+    private String email;
 
     public static UserResponse from(User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .mobile(user.getMobile())
+                .email(user.getEmail())
                 .build();
     }
 }
