@@ -25,7 +25,7 @@ public class AuthService {
     private final OtpService otpService;
 
     @Transactional
-    public Map<String, String> signup(SignupRequest request) {
+    public AuthResponse signup(SignupRequest request) {
         if (userRepository.existsByMobile(request.getMobile())) {
             throw new BadRequestException("Mobile number already registered");
         }
@@ -34,19 +34,12 @@ public class AuthService {
                 .name(request.getName())
                 .mobile(request.getMobile())
                 .passwordHash(passwordEncoder.encode(request.getPassword()))
-                .verified(false)
+                .verified(true)
                 .build();
 
         userRepository.save(user);
 
-        // Generate and send OTP
-        boolean otpSent = otpService.generateAndSend(request.getMobile());
-
-        if (otpSent) {
-            return Map.of("message", "OTP sent to " + request.getMobile() + ". Please verify to complete signup.");
-        } else {
-            return Map.of("message", "Account created but SMS delivery failed. Please try resending OTP.");
-        }
+        return buildAuthResponse(user);
     }
 
     @Transactional
@@ -56,20 +49,13 @@ public class AuthService {
         User user = userRepository.findByMobile(request.getMobile())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        user.setVerified(true);
-        userRepository.save(user);
-
         return buildAuthResponse(user);
     }
 
     @Transactional
     public Map<String, String> resendOtp(ResendOtpRequest request) {
-        User user = userRepository.findByMobile(request.getMobile())
+        userRepository.findByMobile(request.getMobile())
                 .orElseThrow(() -> new BadRequestException("Mobile number not registered"));
-
-        if (user.isVerified()) {
-            throw new BadRequestException("Mobile number is already verified");
-        }
 
         boolean otpSent = otpService.generateAndSend(request.getMobile());
 
@@ -80,7 +66,8 @@ public class AuthService {
         }
     }
 
-    public AuthResponse login(LoginRequest request) {
+    @Transactional
+    public Map<String, String> login(LoginRequest request) {
         User user = userRepository.findByMobile(request.getMobile())
                 .orElseThrow(() -> new BadRequestException("Invalid mobile number or password"));
 
@@ -88,11 +75,13 @@ public class AuthService {
             throw new BadRequestException("Invalid mobile number or password");
         }
 
-        if (!user.isVerified()) {
-            throw new BadRequestException("Mobile number not verified. Please verify OTP first.");
-        }
+        boolean otpSent = otpService.generateAndSend(request.getMobile());
 
-        return buildAuthResponse(user);
+        if (otpSent) {
+            return Map.of("message", "OTP sent to " + request.getMobile() + ". Please verify to login.");
+        } else {
+            return Map.of("message", "OTP generated but SMS delivery failed. Please try resending OTP.");
+        }
     }
 
     public AuthResponse refresh(RefreshTokenRequest request) {

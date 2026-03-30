@@ -21,7 +21,7 @@ export default function Signup() {
 
     try {
       await signup(form);
-      navigate('/verify-otp', { state: { mobile: form.mobile } });
+      navigate('/dashboard');
     } catch (err) {
       const data = err.response?.data;
       if (data?.errors) {

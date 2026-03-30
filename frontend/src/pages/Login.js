@@ -21,14 +21,9 @@ export default function Login() {
 
     try {
       await login(form);
-      navigate('/dashboard');
+      navigate('/verify-otp', { state: { mobile: form.mobile } });
     } catch (err) {
-      const msg = err.response?.data?.message || 'Login failed. Please try again.';
-      if (msg.includes('not verified')) {
-        navigate('/verify-otp', { state: { mobile: form.mobile } });
-        return;
-      }
-      setError(msg);
+      setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
       setLoading(false);
     }

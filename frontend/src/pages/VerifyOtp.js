@@ -19,7 +19,7 @@ export default function VerifyOtp() {
 
   // Redirect if no mobile in state
   useEffect(() => {
-    if (!mobile) navigate('/signup', { replace: true });
+    if (!mobile) navigate('/login', { replace: true });
   }, [mobile, navigate]);
 
   // Resend cooldown timer
@@ -158,8 +158,8 @@ export default function VerifyOtp() {
           </div>
 
           <p className="text-center text-sm text-gray-500">
-            <Link to="/signup" className="text-indigo-600 hover:underline font-medium">
-              Back to signup
+            <Link to="/login" className="text-indigo-600 hover:underline font-medium">
+              Back to login
             </Link>
           </p>
         </form>

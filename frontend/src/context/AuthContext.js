@@ -29,17 +29,17 @@ export function AuthProvider({ children }) {
   }, [loadUser]);
 
   const login = async (credentials) => {
-    const { data } = await authService.login(credentials);
-    localStorage.setItem('accessToken', data.accessToken);
-    localStorage.setItem('refreshToken', data.refreshToken);
-    setUser({ id: data.id, name: data.name, mobile: data.mobile });
+    // Login now sends OTP, returns message (not tokens)
+    await authService.login(credentials);
+    return credentials.mobile;
   };
 
   const signup = async (formData) => {
-    // Signup now returns a message, not tokens
-    await authService.signup(formData);
-    // Returns the mobile so the caller can redirect to OTP page
-    return formData.mobile;
+    // Signup auto-verifies and returns tokens
+    const { data } = await authService.signup(formData);
+    localStorage.setItem('accessToken', data.accessToken);
+    localStorage.setItem('refreshToken', data.refreshToken);
+    setUser({ id: data.id, name: data.name, mobile: data.mobile });
   };
 
   const verifyOtp = async (mobile, otp) => {
