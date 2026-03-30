@@ -58,7 +58,7 @@ services:
     region: singapore
     envVars:
       - key: REACT_APP_API_URL
-        value: https://studyplanner-api-o2qn.onrender.com/api
+        value: https://studyplanner-api-4g0o.onrender.com/api
 
 databases:
   - name: studyplanner-db
