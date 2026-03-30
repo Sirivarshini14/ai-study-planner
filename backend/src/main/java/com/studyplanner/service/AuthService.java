@@ -40,9 +40,13 @@ public class AuthService {
         userRepository.save(user);
 
         // Generate and send OTP
-        otpService.generateAndSend(request.getMobile());
+        boolean otpSent = otpService.generateAndSend(request.getMobile());
 
-        return Map.of("message", "OTP sent to " + request.getMobile() + ". Please verify to complete signup.");
+        if (otpSent) {
+            return Map.of("message", "OTP sent to " + request.getMobile() + ". Please verify to complete signup.");
+        } else {
+            return Map.of("message", "Account created but SMS delivery failed. Please try resending OTP.");
+        }
     }
 
     @Transactional
@@ -67,9 +71,13 @@ public class AuthService {
             throw new BadRequestException("Mobile number is already verified");
         }
 
-        otpService.generateAndSend(request.getMobile());
+        boolean otpSent = otpService.generateAndSend(request.getMobile());
 
-        return Map.of("message", "OTP resent to " + request.getMobile());
+        if (otpSent) {
+            return Map.of("message", "OTP resent to " + request.getMobile());
+        } else {
+            return Map.of("message", "SMS delivery failed. Please try again later.");
+        }
     }
 
     public AuthResponse login(LoginRequest request) {

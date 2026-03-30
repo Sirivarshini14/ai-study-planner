@@ -4,12 +4,14 @@ import com.studyplanner.entity.OtpVerification;
 import com.studyplanner.exception.BadRequestException;
 import com.studyplanner.repository.OtpVerificationRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OtpService {
@@ -24,7 +26,7 @@ public class OtpService {
     private final SecureRandom random = new SecureRandom();
 
     @Transactional
-    public void generateAndSend(String mobile) {
+    public boolean generateAndSend(String mobile) {
         String otp = generateOtp();
 
         OtpVerification verification = OtpVerification.builder()
@@ -34,7 +36,14 @@ public class OtpService {
                 .build();
 
         otpRepository.save(verification);
-        smsService.sendOtp(mobile, otp);
+
+        try {
+            smsService.sendOtp(mobile, otp);
+            return true;
+        } catch (Exception e) {
+            log.error("SMS delivery failed for {}: {}", mobile, e.getMessage());
+            return false;
+        }
     }
 
     @Transactional
