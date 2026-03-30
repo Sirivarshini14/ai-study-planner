@@ -20,14 +20,17 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_APP_PASSWORD:}
+    username: ${MAIL_USERNAME:noreply@example.com}
+    password: ${MAIL_APP_PASSWORD:placeholder}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enabled: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
 
   jackson:
     serialization:
