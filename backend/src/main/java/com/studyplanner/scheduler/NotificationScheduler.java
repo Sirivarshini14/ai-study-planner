@@ -4,7 +4,6 @@ import com.studyplanner.entity.Notification;
 import com.studyplanner.entity.StudySession;
 import com.studyplanner.repository.NotificationRepository;
 import com.studyplanner.repository.StudySessionRepository;
-import com.studyplanner.service.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,15 +21,9 @@ public class NotificationScheduler {
 
     private final StudySessionRepository sessionRepository;
     private final NotificationRepository notificationRepository;
-    private final EmailService emailService;
 
     private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("hh:mm a");
 
-    /**
-     * Runs every 60 seconds.
-     * Finds sessions starting within the next 10 minutes that haven't been notified yet.
-     * Creates a notification record, sends SMS, and marks the session as notified.
-     */
     @Scheduled(fixedRate = 60_000)
     @Transactional
     public void sendUpcomingSessionReminders() {
@@ -53,7 +46,6 @@ public class NotificationScheduler {
                     session.getStartTime().format(TIME_FMT)
             );
 
-            // Save in-app notification
             Notification notification = Notification.builder()
                     .user(session.getUser())
                     .session(session)
@@ -61,18 +53,11 @@ public class NotificationScheduler {
                     .build();
             notificationRepository.save(notification);
 
-            // Send email reminder
-            try {
-                emailService.sendOtp(session.getUser().getEmail(), message);
-                log.info("Email reminder sent for session {} to user {}",
-                        session.getId(), session.getUser().getEmail());
-            } catch (Exception e) {
-                log.error("Failed to send email for session {}: {}", session.getId(), e.getMessage());
-                // Don't fail the whole batch — continue with other sessions
-            }
-
             session.setNotified(true);
             sessionRepository.save(session);
+
+            log.info("Notification created for session {} user {}",
+                    session.getId(), session.getUser().getId());
         }
     }
 }

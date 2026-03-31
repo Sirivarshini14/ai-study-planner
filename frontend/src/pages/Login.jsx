@@ -21,7 +21,7 @@ export default function Login() {
 
     try {
       await login(form);
-      navigate('/verify-otp', { state: { email: form.email } });
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {

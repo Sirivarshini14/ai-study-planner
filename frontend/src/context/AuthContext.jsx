@@ -29,20 +29,15 @@ export function AuthProvider({ children }) {
   }, [loadUser]);
 
   const login = async (credentials) => {
-    await authService.login(credentials);
-    return credentials.email;
-  };
-
-  const signup = async (formData) => {
-    // Signup auto-verifies and returns tokens
-    const { data } = await authService.signup(formData);
+    const { data } = await authService.login(credentials);
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
     setUser({ id: data.id, name: data.name, mobile: data.mobile, email: data.email });
   };
 
-  const verifyOtp = async (email, otp) => {
-    const { data } = await authService.verifyOtp({ email, otp });
+  const signup = async (formData) => {
+    // Signup auto-verifies and returns tokens
+    const { data } = await authService.signup(formData);
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
     setUser({ id: data.id, name: data.name, mobile: data.mobile, email: data.email });
@@ -54,7 +49,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, signup, verifyOtp, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );

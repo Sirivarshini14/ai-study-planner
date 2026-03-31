@@ -8,7 +8,7 @@ import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
 import Pomodoro from './pages/Pomodoro';
 import Chat from './pages/Chat';
-import VerifyOtp from './pages/VerifyOtp';
+
 
 function AppLayout({ children }) {
   return (
@@ -27,8 +27,6 @@ export default function App() {
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          <Route path="/verify-otp" element={<VerifyOtp />} />
-
           {/* Protected routes */}
           <Route
             path="/dashboard"

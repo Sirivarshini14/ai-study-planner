@@ -35,10 +35,6 @@ services:
         sync: false
       - key: GROQ_MODEL
         value: llama-3.3-70b-versatile
-      - key: MAIL_USERNAME
-        sync: false
-      - key: MAIL_APP_PASSWORD
-        sync: false
       - key: CORS_ORIGINS
         value: https://studyplanner-web-qina.onrender.com
       - key: SPRING_JPA_HIBERNATE_DDL_AUTO

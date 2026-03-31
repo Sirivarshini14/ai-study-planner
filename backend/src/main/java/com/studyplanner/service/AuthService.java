@@ -13,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Map;
-
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -22,7 +20,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
-    private final OtpService otpService;
 
     @Transactional
     public AuthResponse signup(SignupRequest request) {
@@ -46,8 +43,7 @@ public class AuthService {
         return buildAuthResponse(user);
     }
 
-    @Transactional
-    public Map<String, String> login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new BadRequestException("Invalid email or password"));
 
@@ -55,37 +51,7 @@ public class AuthService {
             throw new BadRequestException("Invalid email or password");
         }
 
-        boolean otpSent = otpService.generateAndSend(user.getEmail());
-
-        if (otpSent) {
-            return Map.of("message", "OTP sent to " + user.getEmail() + ". Please check your email.");
-        } else {
-            return Map.of("message", "OTP generated but email delivery failed. Please try resending OTP.");
-        }
-    }
-
-    @Transactional
-    public AuthResponse verifyOtp(VerifyOtpRequest request) {
-        otpService.verify(request.getEmail(), request.getOtp());
-
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-
         return buildAuthResponse(user);
-    }
-
-    @Transactional
-    public Map<String, String> resendOtp(ResendOtpRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BadRequestException("Email not registered"));
-
-        boolean otpSent = otpService.generateAndSend(user.getEmail());
-
-        if (otpSent) {
-            return Map.of("message", "OTP resent to " + user.getEmail());
-        } else {
-            return Map.of("message", "Email delivery failed. Please try again later.");
-        }
     }
 
     public AuthResponse refresh(RefreshTokenRequest request) {
