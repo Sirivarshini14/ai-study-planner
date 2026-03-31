@@ -19,18 +19,17 @@ public class OtpService {
     private final OtpVerificationRepository otpRepository;
     private final EmailService emailService;
 
-    private static final int OTP_LENGTH = 6;
     private static final int OTP_EXPIRY_MINUTES = 5;
     private static final int MAX_ATTEMPTS = 5;
 
     private final SecureRandom random = new SecureRandom();
 
     @Transactional
-    public boolean generateAndSend(String mobile, String email) {
+    public boolean generateAndSend(String email) {
         String otp = generateOtp();
 
         OtpVerification verification = OtpVerification.builder()
-                .mobile(mobile)
+                .email(email)
                 .otp(otp)
                 .expiresAt(LocalDateTime.now().plusMinutes(OTP_EXPIRY_MINUTES))
                 .build();
@@ -47,9 +46,9 @@ public class OtpService {
     }
 
     @Transactional
-    public boolean verify(String mobile, String otp) {
+    public boolean verify(String email, String otp) {
         OtpVerification verification = otpRepository
-                .findTopByMobileAndUsedFalseOrderByCreatedAtDesc(mobile)
+                .findTopByEmailAndUsedFalseOrderByCreatedAtDesc(email)
                 .orElseThrow(() -> new BadRequestException("No OTP found. Please request a new one."));
 
         if (verification.getAttempts() >= MAX_ATTEMPTS) {

@@ -21,8 +21,8 @@ public class OtpVerification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 15)
-    private String mobile;
+    @Column(nullable = false)
+    private String email;
 
     @Column(nullable = false, length = 6)
     private String otp;

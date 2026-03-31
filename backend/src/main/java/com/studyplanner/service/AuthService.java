@@ -47,10 +47,28 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthResponse verifyOtp(VerifyOtpRequest request) {
-        otpService.verify(request.getMobile(), request.getOtp());
+    public Map<String, String> login(LoginRequest request) {
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadRequestException("Invalid email or password"));
 
-        User user = userRepository.findByMobile(request.getMobile())
+        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
+            throw new BadRequestException("Invalid email or password");
+        }
+
+        boolean otpSent = otpService.generateAndSend(user.getEmail());
+
+        if (otpSent) {
+            return Map.of("message", "OTP sent to " + user.getEmail() + ". Please check your email.");
+        } else {
+            return Map.of("message", "OTP generated but email delivery failed. Please try resending OTP.");
+        }
+    }
+
+    @Transactional
+    public AuthResponse verifyOtp(VerifyOtpRequest request) {
+        otpService.verify(request.getEmail(), request.getOtp());
+
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         return buildAuthResponse(user);
@@ -58,33 +76,15 @@ public class AuthService {
 
     @Transactional
     public Map<String, String> resendOtp(ResendOtpRequest request) {
-        User user = userRepository.findByMobile(request.getMobile())
-                .orElseThrow(() -> new BadRequestException("Mobile number not registered"));
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BadRequestException("Email not registered"));
 
-        boolean otpSent = otpService.generateAndSend(request.getMobile(), user.getEmail());
+        boolean otpSent = otpService.generateAndSend(user.getEmail());
 
         if (otpSent) {
             return Map.of("message", "OTP resent to " + user.getEmail());
         } else {
             return Map.of("message", "Email delivery failed. Please try again later.");
-        }
-    }
-
-    @Transactional
-    public Map<String, String> login(LoginRequest request) {
-        User user = userRepository.findByMobile(request.getMobile())
-                .orElseThrow(() -> new BadRequestException("Invalid mobile number or password"));
-
-        if (!passwordEncoder.matches(request.getPassword(), user.getPasswordHash())) {
-            throw new BadRequestException("Invalid mobile number or password");
-        }
-
-        boolean otpSent = otpService.generateAndSend(request.getMobile(), user.getEmail());
-
-        if (otpSent) {
-            return Map.of("message", "OTP sent to " + user.getEmail() + ". Please check your email.");
-        } else {
-            return Map.of("message", "OTP generated but email delivery failed. Please try resending OTP.");
         }
     }
 

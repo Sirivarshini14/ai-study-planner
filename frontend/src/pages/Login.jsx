@@ -6,7 +6,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState({ mobile: '', password: '' });
+  const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -21,7 +21,7 @@ export default function Login() {
 
     try {
       await login(form);
-      navigate('/verify-otp', { state: { mobile: form.mobile } });
+      navigate('/verify-otp', { state: { email: form.email } });
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
     } finally {
@@ -43,13 +43,13 @@ export default function Login() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
-              type="tel"
-              name="mobile"
-              value={form.mobile}
+              type="email"
+              name="email"
+              value={form.email}
               onChange={handleChange}
-              placeholder="Enter your mobile number"
+              placeholder="Enter your email"
               required
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
             />

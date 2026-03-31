@@ -7,7 +7,7 @@ export default function VerifyOtp() {
   const { verifyOtp } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const mobile = location.state?.mobile || '';
+  const email = location.state?.email || '';
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
@@ -17,10 +17,10 @@ export default function VerifyOtp() {
 
   const inputRefs = useRef([]);
 
-  // Redirect if no mobile in state
+  // Redirect if no email in state
   useEffect(() => {
-    if (!mobile) navigate('/login', { replace: true });
-  }, [mobile, navigate]);
+    if (!email) navigate('/login', { replace: true });
+  }, [email, navigate]);
 
   // Resend cooldown timer
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function VerifyOtp() {
     setLoading(true);
 
     try {
-      await verifyOtp(mobile, otpString);
+      await verifyOtp(email, otpString);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.message || 'Verification failed. Please try again.');
@@ -83,7 +83,7 @@ export default function VerifyOtp() {
   const handleResend = async () => {
     setResendLoading(true);
     try {
-      await authService.resendOtp({ mobile });
+      await authService.resendOtp({ email });
       setResendCooldown(30);
       setError('');
     } catch (err) {
@@ -93,7 +93,7 @@ export default function VerifyOtp() {
     }
   };
 
-  if (!mobile) return null;
+  if (!email) return null;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">

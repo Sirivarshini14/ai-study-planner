@@ -29,9 +29,8 @@ export function AuthProvider({ children }) {
   }, [loadUser]);
 
   const login = async (credentials) => {
-    // Login now sends OTP, returns message (not tokens)
     await authService.login(credentials);
-    return credentials.mobile;
+    return credentials.email;
   };
 
   const signup = async (formData) => {
@@ -42,8 +41,8 @@ export function AuthProvider({ children }) {
     setUser({ id: data.id, name: data.name, mobile: data.mobile, email: data.email });
   };
 
-  const verifyOtp = async (mobile, otp) => {
-    const { data } = await authService.verifyOtp({ mobile, otp });
+  const verifyOtp = async (email, otp) => {
+    const { data } = await authService.verifyOtp({ email, otp });
     localStorage.setItem('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
     setUser({ id: data.id, name: data.name, mobile: data.mobile, email: data.email });
